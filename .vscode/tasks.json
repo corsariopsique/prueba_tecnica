@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "tsc: build - tsconfig.json", // Nombre de la tarea
+        "type": "typescript",
+        "tsconfig": "tsconfig.json", // Archivo de configuración de TypeScript
+        "problemMatcher": ["$tsc"],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      }
+    ]
+  }

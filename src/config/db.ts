@@ -1,34 +1,36 @@
 import mongoose from 'mongoose';
+import { ENV } from './env';
+import logger from './logger';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/mi_base_de_datos';
+const MONGODB_URL = ENV.MONGODB_URL;
+
+if (!ENV.MONGODB_URL) {
+  throw new Error("❌ MONGODB_URL no está definido en .env");
+}
 
 export async function connectToDatabase() {
   try {
-    await mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
-    } as any); // "as any" para evitar conflictos de tipos
+    await mongoose.connect(MONGODB_URL!);
+    logger.info('✅ Conectado a MongoDB');
 
-    console.log('✅  Conectado a MongoDB con Mongoose');
+    mongoose.connection.on("disconnected", () => {
+      logger.warn('⚠️  Desconectado de MongoDB');
+    });
+
+    mongoose.connection.on('connected', () => {
+      logger.info('📊 Conexión activa a MongoDB');
+    });
+
+    mongoose.connection.on('error', (err) => {
+      logger.error('❌ Error de MongoDB:', err);
+    });
+
+    mongoose.connection.on("reconnected", () => {
+      logger.info('✅ Reconectado a MongoDB');
+    });
+
   } catch (error) {
-    console.error('❌  Error conectando a MongoDB:', error);
+    logger.error('❌ Error de conexión a MongoDB:', error);
     process.exit(1);
   }
 }
-
-// Ejemplo de modelo (crea una carpeta "models" adicional)
-import { Schema, model } from 'mongoose';
-
-interface IUser {
-  name: string;
-  email: string;
-}
-
-const userSchema = new Schema<IUser>({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-});
-
-export const User = model<IUser>('User', userSchema);

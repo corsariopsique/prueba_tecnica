@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "pwa-node", // Motor de depuración (Node.js)
+        "request": "launch", // Iniciar la aplicación
+        "name": "Debug TypeScript", // Nombre de la configuración
+        "skipFiles": ["<node_internals>/**"], // Ignorar archivos internos de Node.js
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ts-node",
+        "args": ["${workspaceFolder}/src/index.ts"],
+        
+        "console": "integratedTerminal" // Mostrar salida en la terminal integrada
+      }
+    ]
+  }

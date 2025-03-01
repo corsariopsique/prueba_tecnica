@@ -1,14 +1,14 @@
-import env from './env';
+import { ENV } from './env';
 
 export default {
   server: {
-    port: parseInt(env.PORT, 10),
-    environment: env.NODE_ENV,
+    port: parseInt(ENV.PORT, 10),
+    environment: ENV.NODE_ENV,
   },
   database: {
-    uri: env.DB_URI,
+    uri: ENV.MONGODB_URL,
   },
   jwt: {
-    secret: env.JWT_SECRET,
+    secret: ENV.JWT_SECRET,
   },
 };
