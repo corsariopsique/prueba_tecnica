@@ -7,9 +7,9 @@ async function seedDatabase() {
     await connectToDatabase();
     
     const usuario: UsuarioCrear = {
-      nombre: 'Juan Pérez',
-      email: 'juan@example.com',
-      role: 'USUARIO',
+      nombre: 'Pepito Perez',
+      email: 'pepito@perez.com',
+      roles: ['user'],
       password: 'secreto123'
     };
 

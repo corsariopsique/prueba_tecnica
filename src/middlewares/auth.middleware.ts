@@ -1,64 +1,54 @@
 import { Request, Response, NextFunction } from 'express';
-import passport from 'passport';
-import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
 import jwt, { Secret } from 'jsonwebtoken';
-import { Usuario } from '../models/Usuario.model';
 import { ENV } from '../config/env';
+import { JwtPayload } from '../interfaces/JwtPayload.interface';
 
-// Interface para el payload del token
-interface JwtPayload {
-  userId: string;
-  role: string;
+interface RequestExtendida extends Request{
+  user?: JwtPayload;
 }
 
 const SECRET_KEY: Secret = String(ENV.JWT_SECRET);
 
-// Configuración de la estrategia JWT
-const configurePassport = () => {
-  const jwtOptions = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: SECRET_KEY, // Usa una variable de entorno
-    algorithms: ['HS256'] as jwt.Algorithm[],
-  };
 
-  passport.use(
-    new JwtStrategy(jwtOptions, async (payload: JwtPayload, done: VerifiedCallback) => {
-      try {
-        const usuario = await Usuario.findById(payload.userId);
+export const validateToken = (req: RequestExtendida, res: Response, next: NextFunction) => {
 
-        if (!usuario){
-          done(null, false);
-          return;
-        }         
-        
-        // Agrega datos adicionales al req.user si es necesario
-        done(null, { id: usuario.id, role: usuario.role });
-        return;
-        
-      } catch (error) {
-        done(error, false);
-        return;
-      }
-    })
-  );
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+
+
+  if (!token) {
+    res.status(401).json({ message: 'Acceso denegado. No se proporcionó un token.' });
+    return;
+  }
+
+  try {
+    
+    const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
+
+    req.user=decoded;     
+    next();
+    
+  } catch (error) {
+    
+    res.status(401).json({ message: 'Token inválido o expirado.' });
+    return;
+  }
 };
 
-// Middleware de autenticación
-export const authenticateJwt = passport.authenticate('jwt', { session: false });
-
-// Middleware para verificar roles (ejemplo: admin)
-export const checkRole = (roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.usuario || !roles.includes(req.usuario.role)) {
-      res.status(403).json({ message: 'Acceso no autorizado' });
+export const validateRoles = (requiredRoles: string[]) => {
+  return (req: RequestExtendida, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      res.status(401).json({ error: 'Usuario no autenticado' });
+      return;
+    }
+    if (!requiredRoles.some(role => req.user!.roles.includes(role))) {
+      res.status(403).json({ error: 'Acceso denegado' });
       return;
     }
     next();
   };
 };
 
-// Generador de token JWT
-export const generateToken = (usuarioId: string, role: string): string => {  
+export const generateToken = (usuarioId: string, roles: string[]): string => {  
 
   if (!SECRET_KEY) {
     throw new Error("La variable JWT_SECRET no está configurada");
@@ -70,13 +60,10 @@ export const generateToken = (usuarioId: string, role: string): string => {
   };
 
   return jwt.sign(
-    { usuarioId, role,
+    { usuarioId, roles,
       iat: Math.floor(Date.now() / 1000),      
      },
     SECRET_KEY,
     options
   );
 };
-
-// Inicializa Passport al cargar el middleware
-configurePassport();

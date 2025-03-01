@@ -21,9 +21,9 @@ async function startServer() {
       stream: {
         write: (message) => logger.info(message.trim()),
       },
-    }));
-
-    app.use('/auth',authRouter);
+    }));   
+    
+    app.use('/auth',authRouter); 
 
     // Manejo de errores
     app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {

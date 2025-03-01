@@ -21,43 +21,47 @@ const usuarioSchema = new Schema<IUsuario>(
       type: String,
       required: [true, 'La contraseña es obligatoria'],
       minlength: [6, 'La contraseña debe tener al menos 6 caracteres'],
+      select: false
     },
-    role: {
-        type: String,
-        enum: {
-            values: ['ADMINISTRADOR', 'USUARIO'],
-            message: '{VALUE} no es un role válido. Usar ADMIN o USER'
-        },
-        default: 'USUARIO', // Valor por defecto si no se especifica        
-      },
+    roles: {
+      type: [String],
+      enum: ['user', 'editor', 'admin'],
+      default: ['user']
+    },
     edad: {
       type: Number,
-      min: [18, 'La edad mínima es 18 años'],
+      min: [10, 'La edad mínima es 18 años'],
     },
   },
   {
-    timestamps: true,  // Auto-genera createdAt y updatedAt
-    versionKey: false, // Elimina el campo __v
+    timestamps: true,  
+    versionKey: false, 
+    toJSON: {
+      transform: (doc, ret) => {
+        delete ret.password; 
+        return ret;
+      },
+    },
   }
 );
 
-// Métodos personalizados (ej: hashear contraseña)
+
 usuarioSchema.pre<IUsuario>('save', async function (next) {
     const usuario = this;
 
   if (!this.isModified('password')) return next();
   try {
-    // Generar "salt" (costo computacional)
-    const salt = await bcrypt.genSalt(10); // 10 es el número de rondas
+    
+    const salt = await bcrypt.genSalt(10); 
 
-    // Hashear la contraseña con el salt
+    
     const hash = await bcrypt.hash(usuario.password, salt);
 
-    // Reemplazar la contraseña en texto plano por el hash
+    
     usuario.password = hash;
     next();
   } catch (error) {
-    next(error as Error); // Pasar el error a Mongoose
+    next(error as Error); 
   }
 
 });

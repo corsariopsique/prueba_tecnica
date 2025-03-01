@@ -1,13 +1,11 @@
 import winston from 'winston';
 
-// Formato de logs
 const logFormat = winston.format.printf(
   ({ level, message, timestamp, stack }) => {
     return `${timestamp} [${level}]: ${stack || message}`;
   }
 );
 
-// Configuración de Winston
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
@@ -16,9 +14,9 @@ const logger = winston.createLogger({
     logFormat
   ),
   transports: [
-    new winston.transports.Console(), // Logs en consola
-    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }), // Errores en archivo
-    new winston.transports.File({ filename: 'logs/combined.log' }) // Todos los logs
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'logs/combined.log' })
   ],
 });
 

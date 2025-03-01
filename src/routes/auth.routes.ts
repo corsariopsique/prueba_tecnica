@@ -1,36 +1,42 @@
-import { Router } from 'express';
-import { authenticateJwt, checkRole, generateToken } from '../middlewares/auth.middleware';
+import { Router, Request } from 'express';
+import { generateToken, validateToken, validateRoles } from '../middlewares/auth.middleware';
 import { Usuario } from '../models/Usuario.model';
 import { UsuarioServicio } from '../services/usuario.service';
 import rateLimit from 'express-rate-limit';
-import { ENV } from '../config/env';
+import { JwtPayload } from '../interfaces/JwtPayload.interface';
 
-// Configuración de rate limiting para login
+
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 5, // Máximo 5 intentos por ventana
+  windowMs: 15 * 60 * 1000, 
+  max: 5, 
   message: 'Demasiados intentos de login, intenta nuevamente más tarde'
 });
 
-const router = Router();
-
-// Extender tipo Request de Express (colocar en archivo de tipos)
-declare global {
-  namespace Express {
-    interface Request {
-      usuario?: {
-        id: string;
-        role: string;
-      };
-    }
-  }
+interface RequestExtendida extends Request {
+  user?: JwtPayload;
 }
 
-// Ruta protegida
-router.get('/profile', authenticateJwt, async (req, res, next) => {
+const router = Router();
+
+router.post('/registrar', validateToken, validateRoles(['admin']), async (req: RequestExtendida, res, next) => {
+  try{
+
+    const nuevoUsuario = req.body;
+    const usuarioCreado = await UsuarioServicio.crearUsuario(nuevoUsuario);    
+
+    res.json(usuarioCreado);
+
+  } catch(error){
+    console.error('Datos de usuario incompletos');
+    next();
+  }
+});
+
+router.get('/profile', validateToken, validateRoles(['admin','user']), async (req: RequestExtendida, res, next) => {      
+
   try {
-    const usuario = await Usuario.findById(req.usuario?.id)
-      .select('-password -__v') // Excluir información sensible
+    const usuario = await Usuario.findById(req.user!.usuarioId)
+      .select('-password -__v') 
       .lean();
       
     if (!usuario) {
@@ -39,12 +45,13 @@ router.get('/profile', authenticateJwt, async (req, res, next) => {
     }
     
     res.json(usuario);
+
   } catch (error) {
-    next(error); // Pasar al manejador de errores
+    next(error); 
   }
 });
 
-router.get('/users', authenticateJwt, async (req, res, next) => {
+router.get('/users', validateToken, validateRoles(['admin']), async (req, res, next) => {
   try {
   const usuario = await UsuarioServicio.todosLosUsuarios();
 
@@ -59,23 +66,21 @@ router.get('/users', authenticateJwt, async (req, res, next) => {
   }
 });
 
-// Ruta de eliminación para administradores
-router.delete('/:id', authenticateJwt, checkRole(['ADMINISTRADOR']), async (req, res, next) => {
+router.delete('/:id', validateToken, validateRoles(['admin']), async (req: RequestExtendida, res, next) => {
   try {
-    const deletedUser = await Usuario.findByIdAndDelete(req.params.id);
+    const deletedUser = await UsuarioServicio.eliminarUsuario(req.params.id);    
+    res.send(`El usuario con el id ${req.user!.usuarioId} ha sido eliminado`);    
     
     if (!deletedUser) {
       res.status(404).json({ message: 'Usuario no encontrado' });
       return;
-    }
+    }    
     
-    res.status(204).send();
   } catch (error) {
     next(error);
   }
 });
 
-// Login con rate limiting
 router.post('/login', loginLimiter, async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -93,21 +98,14 @@ router.post('/login', loginLimiter, async (req, res, next) => {
       return;
     }
 
-    const token = generateToken(usuario.id, usuario.role);
-    
-    // Configurar cookie segura (opcional)
-    res.cookie('jwt', token, {
-      httpOnly: true,
-      secure: ENV.NODE_ENV === 'production',
-      maxAge: 3600000 // 1 hora
-    });
+    const token = generateToken(usuario.id, usuario.roles);
     
     res.json({
       token,
-      user: {
+      usuario: {
         id: usuario.id,
         email: usuario.email,
-        role: usuario.role
+        roles: usuario.roles
       }
     });
   } catch (error) {

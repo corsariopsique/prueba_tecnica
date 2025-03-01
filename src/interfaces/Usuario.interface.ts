@@ -4,7 +4,7 @@ export interface IUsuarioBase {
     nombre: string;
     email: string;
     password: string;
-    role: 'ADMINISTRADOR' | 'USUARIO';
+    roles: string[];
     edad?: number;
     comparePassword(contraseña_usuario: string): Promise<boolean>;
 }
