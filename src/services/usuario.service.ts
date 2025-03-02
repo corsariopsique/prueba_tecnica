@@ -1,5 +1,5 @@
 import { Usuario } from '../models/Usuario.model';
-import { IUsuario, UsuarioCrear } from '../interfaces/Usuario.interface';
+import { UsuarioCrear } from '../interfaces/Usuario.interface';
 
 export class UsuarioServicio {
 

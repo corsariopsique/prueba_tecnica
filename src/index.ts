@@ -5,6 +5,7 @@ import logger from './config/logger';
 import morgan from 'morgan';
 import express from 'express';
 import authRouter from './routes/auth.routes';
+import taskRouter from './routes/tarea.routes';
 
 const PORT = ENV.PORT || 3000;
 
@@ -24,6 +25,7 @@ async function startServer() {
     }));   
     
     app.use('/auth',authRouter); 
+    app.use('/tareas',taskRouter);
 
     // Manejo de errores
     app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {

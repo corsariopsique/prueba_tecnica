@@ -24,7 +24,7 @@ router.post('/registrar', validateToken, validateRoles(['admin']), async (req: R
     const nuevoUsuario = req.body;
     const usuarioCreado = await UsuarioServicio.crearUsuario(nuevoUsuario);    
 
-    res.json(usuarioCreado);
+    res.status(201).json(usuarioCreado);
 
   } catch(error){
     console.error('Datos de usuario incompletos');
