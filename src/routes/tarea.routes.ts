@@ -1,10 +1,14 @@
-import { Router, Request } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { Types } from "mongoose";
-import { validateToken, validateRoles } from '../middlewares/auth.middleware';
+import { validateToken } from '../middlewares/auth.middleware';
 import { JwtPayload } from '../interfaces/JwtPayload.interface';
 import { TareaServicio } from '../services/tarea.service';
 import { TareaCrear } from '../interfaces/Tarea.interface';
-
+import { BadRequestError } from '../errors/http/BadRequestError';
+import { ForbiddenError } from '../errors/http/ForbiddenError';
+import { UnauthorizedError } from '../errors/http/UnauthorizedError';
+import { NotFoundError } from '../errors/http/NotFoundError';
+import 'express-async-errors';
 
 interface RequestExtendida extends Request {
     user?: JwtPayload;
@@ -12,25 +16,25 @@ interface RequestExtendida extends Request {
 
 const router = Router();
 
-router.get('/tareas', validateToken, async (req: RequestExtendida, res, next ) => {
+router.get('/tareas', validateToken, async (req: RequestExtendida, res: Response, next: NextFunction ) => {
     try{
         const tareas_usuario = await TareaServicio.buscarTareasByUser(req.user!?.usuarioId);
 
         if(!tareas_usuario){
-            res.status(404).json({mensaje: `El Usuario ${req.user?.username} no tiene tareas registradas`});
-            return;
+            throw new NotFoundError(`El Usuario ${req.user?.username} no tiene tareas registradas`);                        
         }
+        
         res.json(tareas_usuario);
 
-    }   catch(error){
-            next(error);
-        }
+    }catch(error){
+        next(error);
+    }
 });
 
 router.post('/addTarea', validateToken, async (req:RequestExtendida, res, next) => {
 
     if (!Types.ObjectId.isValid(req.user!.usuarioId)) {
-        throw new Error("ID de usuario inválido");
+        throw new BadRequestError("ID de usuario inválido");
     }     
 
     try{
@@ -49,7 +53,7 @@ router.post('/addTarea', validateToken, async (req:RequestExtendida, res, next) 
         res.status(201).json(tareaCreada);
 
     } catch (error) {
-      next(error);    
+        next(error);    
     }
 
 });
@@ -57,10 +61,14 @@ router.post('/addTarea', validateToken, async (req:RequestExtendida, res, next) 
 router.put('/:id', validateToken, async (req: RequestExtendida, res, next) => {
 
     if (!Types.ObjectId.isValid(req.user!.usuarioId)) {
-        throw new Error("ID de usuario inválido");
+        throw new BadRequestError("ID de usuario inválido");
     }
     
-    const tareaAEditar = await TareaServicio.buscarTareaById(req.params.id);    
+    const tareaAEditar = await TareaServicio.buscarTareaById(req.params.id);   
+    
+    if (!req.body || Object.keys(req.body).length === 0){
+        throw new BadRequestError('El cuerpo de la solicitud esta vacio');
+    }
 
     if(tareaAEditar?.usuario.toString() === new Types.ObjectId(req.user?.usuarioId).toString()){
 
@@ -86,12 +94,7 @@ router.put('/:id', validateToken, async (req: RequestExtendida, res, next) => {
                 }
     
                 if (!estadosPermitidos.includes(nuevoEstado)) {
-                    res.status(400).json({
-                    success: false,
-                    error: 'Estado no válido'
-                    });
-        
-                    return;
+                    throw new ForbiddenError('El estado que ha ingresado es invalido');                    
                 }else if (estadosPermitidos.includes(nuevoEstado)) {
                     tareaEditar.estado = nuevoEstado;
                 } 
@@ -109,12 +112,10 @@ router.put('/:id', validateToken, async (req: RequestExtendida, res, next) => {
         }
 
     }else if (tareaAEditar?.usuario.toString() != new Types.ObjectId(req.user?.usuarioId).toString() && tareaAEditar !== null){
-        res.status(401).send(`El usuario ${req.user?.usuarioId} no esta autorizado para editar esta tarea.`);
-        return;
-
+        throw new UnauthorizedError(`El usuario ${req.user?.usuarioId} no esta autorizado para editar esta tarea.`)        
+    
     }else if (tareaAEditar === null){
-        res.status(404).send(`La tarea con el id ${req.params.id.toString()} no fue encontrada.`);
-        return;
+        throw new NotFoundError(`La tarea con el id ${req.params.id.toString()} no fue encontrada.`);        
     }   
 });
 
@@ -127,12 +128,12 @@ router.delete('/:id', validateToken, async(req:RequestExtendida, res, next) => {
         const tareaEliminada = TareaServicio.eliminarTarea(req.params.id);
         res.status(200).send(`La tarea con el identificador ${req.params.is} fue eliminada con exito.`);
         return;
+
     }else if (tareaAEliminar?.usuario.toString() != new Types.ObjectId(req.user?.usuarioId).toString() && tareaAEliminar !== null){
-        res.status(401).send(`El usuario ${req.user?.usuarioId} no esta autorizado para eliminar esta tarea.`);
-        return;
+        throw new UnauthorizedError(`El usuario ${req.user?.usuarioId} no esta autorizado para eliminar esta tarea.`);        
+
     }else if (tareaAEliminar===null){
-        res.status(404).send(`La tarea con el id ${req.params.id.toString()} no fue encontrada.`);
-        return;
+        throw new NotFoundError(`La tarea con el id ${req.params.id.toString()} no fue encontrada.`);        
     }
 });
 

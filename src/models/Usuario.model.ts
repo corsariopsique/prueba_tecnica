@@ -31,7 +31,7 @@ const usuarioSchema = new Schema<IUsuario>(
     },
     edad: {
       type: Number,
-      min: [10, 'La edad mínima es 18 años'],
+      min: [18, 'La edad mínima es 18 años'],
     },
   },
   {

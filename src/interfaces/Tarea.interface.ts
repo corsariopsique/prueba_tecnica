@@ -3,7 +3,7 @@ import { Document, Types } from "mongoose";
 export interface ITareaBase {
     titulo:string;
     descripcion:string;
-    fecha_vencimiento:Date | undefined;
+    fecha_vencimiento: Date | undefined;
     estado: 'Pendiente' | 'Completada' | 'Cancelada';
     usuario: Types.ObjectId;
 }

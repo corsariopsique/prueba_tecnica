@@ -1,7 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
 import jwt, { Secret } from 'jsonwebtoken';
 import { ENV } from '../config/env';
 import { JwtPayload } from '../interfaces/JwtPayload.interface';
+import { AppError } from '../errors/http/AppError';
+import logger from '../utils/logger';
+import { UnauthorizedError } from '../errors/http/UnauthorizedError';
+import { ForbiddenError } from '../errors/http/ForbiddenError';
 
 interface RequestExtendida extends Request{
   user?: JwtPayload;
@@ -9,15 +13,13 @@ interface RequestExtendida extends Request{
 
 const SECRET_KEY: Secret = String(ENV.JWT_SECRET);
 
-
 export const validateToken = (req: RequestExtendida, res: Response, next: NextFunction) => {
 
   const token = req.header('Authorization')?.replace('Bearer ', '');
 
 
   if (!token) {
-    res.status(401).json({ message: 'Acceso denegado. No se proporcionó un token.' });
-    return;
+    throw new UnauthorizedError('Acceso denegado, no se proporciono un token');    
   }
 
   try {
@@ -28,30 +30,31 @@ export const validateToken = (req: RequestExtendida, res: Response, next: NextFu
     next();
     
   } catch (error) {
-    
-    res.status(401).json({ message: 'Token inválido o expirado.' });
-    return;
+    throw new UnauthorizedError('Token invalido o expirado');    
   }
 };
 
+
 export const validateRoles = (requiredRoles: string[]) => {
+
   return (req: RequestExtendida, res: Response, next: NextFunction) => {
+
     if (!req.user) {
-      res.status(401).json({ error: 'Usuario no autenticado' });
-      return;
+      throw new UnauthorizedError('Usuario no autorizado');      
     }
+
     if (!requiredRoles.some(role => req.user!.roles.includes(role))) {
-      res.status(403).json({ error: 'Acceso denegado' });
-      return;
+      throw new ForbiddenError('Acceso Denegado');      
     }
     next();
   };
 };
 
+
 export const generateToken = (usuarioId: string, roles: string[]): string => {  
 
   if (!SECRET_KEY) {
-    throw new Error("La variable JWT_SECRET no está configurada");
+    throw new AppError(500,"La variable JWT_SECRET no está configurada");
   }
 
   const options: jwt.SignOptions = {
@@ -66,4 +69,25 @@ export const generateToken = (usuarioId: string, roles: string[]): string => {
     SECRET_KEY,
     options
   );
+};
+
+
+export const errorHandler: ErrorRequestHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
+  
+  if (err instanceof AppError) {
+      res.status(err.statusCode).json({
+      status: "error",
+      message: err.message,
+    });    
+  }
+
+  logger.error(`Error no controlado: ${err.message}`, {
+    stack: err.stack,
+    path: req.path,
+  });
+
+  res.status(500).json({
+    status: "error",
+    message: "Error interno del servidor",
+  });
 };

@@ -1,9 +1,13 @@
-import { Router, Request } from 'express';
-import { generateToken, validateToken, validateRoles } from '../middlewares/auth.middleware';
+import { Router, Request, Response, NextFunction } from 'express';
+import { generateToken, validateToken, validateRoles, errorHandler } from '../middlewares/auth.middleware';
 import { Usuario } from '../models/Usuario.model';
 import { UsuarioServicio } from '../services/usuario.service';
 import rateLimit from 'express-rate-limit';
 import { JwtPayload } from '../interfaces/JwtPayload.interface';
+import { BadRequestError } from '../errors/http/BadRequestError';
+import { UnauthorizedError } from '../errors/http/UnauthorizedError';
+import { NotFoundError } from '../errors/http/NotFoundError';
+import 'express-async-errors';
 
 
 const loginLimiter = rateLimit({
@@ -18,7 +22,7 @@ interface RequestExtendida extends Request {
 
 const router = Router();
 
-router.post('/registrar', validateToken, validateRoles(['admin']), async (req: RequestExtendida, res, next) => {
+router.post('/registrar', errorHandler, async (req: RequestExtendida, res:Response, next:NextFunction) => {
   try{
 
     const nuevoUsuario = req.body;
@@ -26,9 +30,8 @@ router.post('/registrar', validateToken, validateRoles(['admin']), async (req: R
 
     res.status(201).json(usuarioCreado);
 
-  } catch(error){
-    console.error('Datos de usuario incompletos');
-    next();
+  } catch(error){    
+    next(error);
   }
 });
 
@@ -40,8 +43,7 @@ router.get('/profile', validateToken, validateRoles(['admin','user']), async (re
       .lean();
       
     if (!usuario) {
-      res.status(404).json({ message: 'Usuario no encontrado' });
-      return;
+      throw new NotFoundError('Usuario no encontrado');      
     }
     
     res.json(usuario);
@@ -56,11 +58,10 @@ router.get('/users', validateToken, validateRoles(['admin']), async (req, res, n
   const usuario = await UsuarioServicio.todosLosUsuarios();
 
   if (!usuario) {
-    res.status(404).json({ message: 'no hay usuarios' });
-    return;
+    throw new NotFoundError('Este error no tiene sentido, sino quien haria la consulta?... jejejejeje');    
   }
-
   res.json(usuario);
+
   }catch (error) {
     next(error);
   }
@@ -72,8 +73,7 @@ router.delete('/:id', validateToken, validateRoles(['admin']), async (req: Reque
     res.send(`El usuario con el id ${req.user!.usuarioId} ha sido eliminado`);    
     
     if (!deletedUser) {
-      res.status(404).json({ message: 'Usuario no encontrado' });
-      return;
+      throw new NotFoundError('Usuario no encontrado');      
     }    
     
   } catch (error) {
@@ -87,15 +87,13 @@ router.post('/login', loginLimiter, async (req, res, next) => {
     
     // Validar entrada
     if (!email || !password) {
-      res.status(400).json({ message: 'Email y contraseña son requeridos' });
-      return;
+      throw new BadRequestError('Email y constraseña son requeridos');      
     }
     
     const usuario = await Usuario.findOne({ email }).select('+password');
     
     if (!usuario || !(await usuario.comparePassword(password))) {
-      res.status(401).json({ message: 'Credenciales inválidas' });
-      return;
+      throw new UnauthorizedError('Datos de usuario invalidos');      
     }
 
     const token = generateToken(usuario.id, usuario.roles);
