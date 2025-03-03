@@ -134,7 +134,7 @@ router.delete('/:id', validateToken, async(req:RequestExtendida, res, next) => {
 
         const tareaEliminada = TareaServicio.eliminarTarea(req.params.id);
         res.status(200).send(`La tarea con el identificador ${req.params.is} fue eliminada con exito.`);
-        return;
+        next();
 
     }else if (tareaAEliminar?.usuario.toString() != new Types.ObjectId(req.user?.usuarioId).toString() && tareaAEliminar !== null){
         throw new UnauthorizedError(`El usuario ${req.user?.usuarioId} no esta autorizado para eliminar esta tarea.`);        
