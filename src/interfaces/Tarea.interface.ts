@@ -6,11 +6,11 @@ import { Document, Types } from "mongoose";
  */
 
 export interface ITareaBase {
-    titulo:string;
-    descripcion:string;
-    fecha_vencimiento: Date | undefined;
-    estado: 'Pendiente' | 'Completada' | 'Cancelada';
-    usuario: Types.ObjectId;
+  titulo: string;
+  descripcion: string;
+  fecha_vencimiento: Date | undefined;
+  estado: "Pendiente" | "Completada" | "Cancelada";
+  usuario: Types.ObjectId;
 }
 
 /**
@@ -19,14 +19,14 @@ export interface ITareaBase {
  * @typedef {TareaCrear}
  */
 
-export type TareaCrear = Omit<ITareaBase, "_id" | "createdAt" | "updatedAt" >;
+export type TareaCrear = Omit<ITareaBase, "_id" | "createdAt" | "updatedAt">;
 
 /**
  * Interface que determina el modelo completo con las propiedades agregadas de mongoose
  * @interface ITarea
  */
 
-export interface ITarea extends ITareaBase, Document{
-    createdAt: Date;
-    updatedAt: Date;    
+export interface ITarea extends ITareaBase, Document {
+  createdAt: Date;
+  updatedAt: Date;
 }

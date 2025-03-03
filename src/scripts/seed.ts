@@ -1,23 +1,23 @@
-import { UsuarioServicio } from '../services/usuario.service';
-import { connectToDatabase } from '../config/db';
-import { UsuarioCrear } from '../interfaces/Usuario.interface';
+import { UsuarioServicio } from "../services/usuario.service";
+import { connectToDatabase } from "../config/db";
+import { UsuarioCrear } from "../interfaces/Usuario.interface";
 
 async function seedDatabase() {
   try {
     await connectToDatabase();
-    
+
     const usuario: UsuarioCrear = {
-      nombre: 'Pepito Perez',
-      email: 'pepito@perez.com',
-      roles: ['user'],
-      password: 'secreto123'
+      nombre: "Pepito Perez",
+      email: "pepito@perez.com",
+      roles: ["user"],
+      password: "secreto123",
     };
 
     const creado = await UsuarioServicio.crearUsuario(usuario);
-    console.log('Usuario semilla creado:', creado);
+    console.log("Usuario semilla creado:", creado);
     process.exit(0);
   } catch (error) {
-    console.error('Error en seed:', error);
+    console.error("Error en seed:", error);
     process.exit(1);
   }
 }
