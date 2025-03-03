@@ -23,23 +23,7 @@ if (!ENV.MONGODB_URL) {
 export async function connectToDatabase() {
   try {
     await mongoose.connect(MONGODB_URL!);
-    logger.info('✅ Conectado a MongoDB');
-
-    mongoose.connection.on("disconnected", () => {
-      logger.warn('⚠️  Desconectado de MongoDB');
-    });
-
-    mongoose.connection.on('connected', () => {
-      logger.info('📊 Conexión activa a MongoDB');
-    });
-
-    mongoose.connection.on('error', (err) => {
-      logger.error('❌ Error de MongoDB:', err);
-    });
-
-    mongoose.connection.on("reconnected", () => {
-      logger.info('✅ Reconectado a MongoDB');
-    });
+    logger.info('✅ Conectado a MongoDB');  
 
   } catch (error) {
     logger.error('❌ Error de conexión a MongoDB:', error);

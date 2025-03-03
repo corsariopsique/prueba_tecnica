@@ -25,4 +25,4 @@ if (!env.success) {
   process.exit(1);
 }
 
-export const ENV = env.data;
+export const ENV = env.data!;
