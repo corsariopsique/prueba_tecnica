@@ -1,5 +1,6 @@
 // archivo: src/@types/express.d.ts
 import { JwtPayload } from "../interfaces/JwtPayload.interface";
+import "supertest";
 import { Request } from "express";
 import { IUsuario, IUsuarioBase } from "../interfaces/Usuario.interface";
 import "express-serve-static-core";

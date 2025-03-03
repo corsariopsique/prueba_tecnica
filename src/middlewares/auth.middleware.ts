@@ -8,8 +8,7 @@ import {
   Request,
   Response,
   NextFunction,
-  ErrorRequestHandler,
-  RequestHandler,
+  ErrorRequestHandler,  
 } from "express";
 import jwt, { Secret } from "jsonwebtoken";
 import { ENV } from "../config/env";
@@ -66,11 +65,11 @@ export const validateToken = (
 export const validateRoles = (requiredRoles: string[]) => {
   return (req: RequestExtendida, res: Response, next: NextFunction) => {
     if (!req.user) {
-      throw new UnauthorizedError("Usuario no autorizado");
+      throw new ForbiddenError("Usuario no autorizado");
     }
 
     if (!requiredRoles.some((role) => req.user!.roles.includes(role))) {
-      throw new ForbiddenError("Acceso Denegado");
+      throw new UnauthorizedError("Acceso Denegado");
     }
     next();
   };

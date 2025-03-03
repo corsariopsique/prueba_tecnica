@@ -84,6 +84,8 @@ prueba_tecnica/
 │   ├── swagger-generator/   # script generador de swagger.json
 │   └── index.ts             # Archivo principal de arranque
 ├── tests/                   # Pruebas unitarias y de integración
+├── .gitignore               # Esquema de elementos a ignorar al hacer el push
+├── jest.config.json         # Esquema de configuracion de Jest
 ├── package.json             # Configuración de dependencias y scripts
 ├── tsconfig.json            # Configuración del compilador TypeScript
 ├── swagger.json             # Esquema documentacion APIs
@@ -105,8 +107,8 @@ prueba_tecnica/
 
 En el archivo `package.json` se incluyen algunos scripts útiles:
 
-- `npm run dev` o `yarn dev`: Inicia el servidor en modo desarrollo.
-- `npm run build` o `yarn build`: Compila el código TypeScript a JavaScript.
-- `npm run start` o `yarn start`: Inicia la aplicación en modo producción (asegúrate de haber compilado previamente).
-- `npm run test` o `yarn test`: Ejecuta las pruebas (si están configuradas).
-- `npm run generate:swagger`: Genera swagger.json para el esquema de documentacion APIs
+- `npm run dev` : Inicia el servidor en modo desarrollo.
+- `npm run build` : Compila el código TypeScript a JavaScript.
+- `npm run start` : Inicia la aplicación en modo producción (asegúrate de haber compilado previamente).
+- `npm run test` : Ejecuta los esquemas de pruebas 
+- `npm run generate:swagger` : Genera el archivo swagger.json para el esquema de documentacion de APIs

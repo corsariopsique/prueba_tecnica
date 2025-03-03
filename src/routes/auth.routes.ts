@@ -10,7 +10,6 @@ import {
   generateToken,
   validateToken,
   validateRoles,
-  errorHandler,
 } from "../middlewares/auth.middleware";
 import { Usuario } from "../models/Usuario.model";
 import { UsuarioServicio } from "../services/usuario.service";
@@ -52,7 +51,6 @@ const router = Router();
 
 router.post(
   "/registrar",
-  errorHandler,
   async (req: RequestExtendida, res: Response, next: NextFunction) => {
     try {
       const nuevoUsuario = req.body;
@@ -85,7 +83,6 @@ router.post(
 router.get(
   "/profile",
   validateToken,
-  validateRoles(["admin", "user"]),
   async (req: RequestExtendida, res, next) => {
     try {
       const usuario = await Usuario.findById(req.user!.usuarioId)
@@ -202,8 +199,7 @@ router.delete(
 router.post("/login", loginLimiter, async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
-    // Validar entrada
+    
     if (!email || !password) {
       throw new BadRequestError("Email y constraseña son requeridos");
     }
