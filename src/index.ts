@@ -1,3 +1,9 @@
+/**
+ * Indice principal del sistema de gestión de usuarios y tareas.
+ * @module index.ts
+ * @author Mario Andres Ordoñez Serrano 
+ */
+
 import express from 'express';
 import { ENV } from './config/env';
 import { connectToDatabase } from './config/db';
@@ -22,7 +28,7 @@ async function startServer() {
       stream: {
         write: (message) => logger.info(message.trim()),
       },
-    })); 
+    }));   
 
     await connectToDatabase();
     console.log('✅ Conectado a MongoDB'); 
@@ -32,9 +38,9 @@ async function startServer() {
 
     app.use((req, res, next) => {
       next(new AppError(404, 'Ruta no encontrada'));
-    });   
+    });     
     
-    app.use(errorHandler);   
+    app.use(errorHandler);  
 
     app.listen(PORT, () => {
       logger.info(`Servidor escuchando en http://localhost:${PORT}`);

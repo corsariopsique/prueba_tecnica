@@ -1,3 +1,9 @@
+/**
+ * Modulo de implementacion de sistema de logs en el servicio.
+ * @module logger.ts
+ * @author Mario Andres Ordoñez Serrano
+ */
+
 import winston from 'winston';
 
 const logFormat = winston.format.printf(
@@ -19,5 +25,11 @@ const logger = winston.createLogger({
     new winston.transports.File({ filename: 'logs/combined.log' })
   ],
 });
+
+/**
+ * Exporta esquema de gestions de logs
+ * @function default
+ * @returns flujo de logs sobre consola y archivos
+ */
 
 export default logger;

@@ -1,3 +1,9 @@
+/**
+ * Modulo de la entidad Usuario, determinacion de atributos y metodos de validacion o transformacion de campos
+ * @module Usuario.model.ts
+ * @author Mario Andres Ordoñez Serrano
+ */
+
 import { Schema, model } from 'mongoose';
 import { IUsuario } from '../interfaces/Usuario.interface';
 import bcrypt from 'bcrypt';
@@ -71,5 +77,13 @@ usuarioSchema.methods.comparePassword = async function
 (contraseña_usuario: string): Promise<boolean> {
   return bcrypt.compare(contraseña_usuario, this.password);
 };
+
+  /**
+ * Entidad Usuario la cual permite la implementacion de la capa de servicio.
+ * @class Usuario
+ * @memberof IUsuario
+ * @example
+ * const usuarioNuevo = new IUsuarioBase (usuarioData);
+ */
 
 export const Usuario = model<IUsuario>('Usuario', usuarioSchema);

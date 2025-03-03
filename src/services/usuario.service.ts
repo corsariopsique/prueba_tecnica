@@ -1,6 +1,19 @@
+/**
+ * Modulo de implementacion de servicios para el modelo Usuario
+ * @module usuario.service.ts
+ * @author Mario Andres Ordoñez Serrano
+ */
+
 import { Usuario } from '../models/Usuario.model';
 import { UsuarioCrear } from '../interfaces/Usuario.interface';
 import { AppError } from '../errors/http/AppError';
+
+/**
+ * Clase que implementa los metodos de gestion CRUD para el modelo usuario
+ * se gestionan errores que son enviados automaticamente al middleware.
+ * @class UsuarioServicio
+ * @memberof ITarea 
+ */
 
 export class UsuarioServicio {
 

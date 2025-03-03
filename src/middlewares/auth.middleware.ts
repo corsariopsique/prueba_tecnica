@@ -1,4 +1,10 @@
-import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
+/**
+ * Modulo de configuracion del middleware para gestion de autenticacion, autorizacion, errores y generacion de tokens JWT.
+ * @module auth.middleware.ts
+ * @author Mario Andres Ordoñez Serrano
+ */
+
+import { Request, Response, NextFunction, ErrorRequestHandler, RequestHandler } from 'express';
 import jwt, { Secret } from 'jsonwebtoken';
 import { ENV } from '../config/env';
 import { JwtPayload } from '../interfaces/JwtPayload.interface';
@@ -12,6 +18,16 @@ interface RequestExtendida extends Request{
 }
 
 const SECRET_KEY: Secret = String(ENV.JWT_SECRET);
+
+/**
+ * Valida tokens JWT y verifica su autenticidad y vigencia
+ * requiere de la interfaz RequestExtendida para poder manejar los campos de JWTPayload
+ * @function validateToken
+ * @param req
+ * @param res
+ * @param next
+ * @returns {RequestHandler}  
+ */
 
 export const validateToken = (req: RequestExtendida, res: Response, next: NextFunction) => {
 
@@ -34,6 +50,12 @@ export const validateToken = (req: RequestExtendida, res: Response, next: NextFu
   }
 };
 
+/**
+ * Valida roles de usuario en una solicitud
+ * @function validateRoles
+ * @param requiredRoles
+ * @returns {RequestHandler}  
+ */
 
 export const validateRoles = (requiredRoles: string[]) => {
 
@@ -50,6 +72,14 @@ export const validateRoles = (requiredRoles: string[]) => {
   };
 };
 
+
+/**
+ * Genera tokens JWT 
+ * @function generateToken
+ * @param usuarioId
+ * @param roles 
+ * @returns {String}  
+ */
 
 export const generateToken = (usuarioId: string, roles: string[]): string => {  
 
@@ -71,6 +101,16 @@ export const generateToken = (usuarioId: string, roles: string[]): string => {
   );
 };
 
+/**
+ * Gestiona errores del sistema
+ * por medio de la @class{AppError} y envia respuestas
+ * @function errorHandler
+ * @param err
+ * @param req 
+ * @param res
+ * @param next
+ * @returns {ErrorRequestHandler}  
+ */
 
 export const errorHandler: ErrorRequestHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   

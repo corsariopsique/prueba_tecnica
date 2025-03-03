@@ -1,3 +1,9 @@
+/**
+ * Modulo de la entidad tarea, determinacion de atributos y metodos de validacion de campos
+ * @module Tarea.model.ts
+ * @author Mario Andres Ordoñez Serrano
+ */
+
 import { Schema, model } from "mongoose";
 import { ITarea } from "../interfaces/Tarea.interface";
 
@@ -67,6 +73,14 @@ const validadoresFecha = {
       return fechaUTC >= ahoraUTC;
     }
   };
+
+  /**
+ * Entidad Tarea la cual permite la implementacion de la capa de servicio.
+ * @class Tarea
+ * @memberof ITarea
+ * @example
+ * const tareaNueva = new Partial<ITareaBase> (...)
+ */
 
   export const Tarea = model<ITarea>('Tarea', tareaSchema);
 

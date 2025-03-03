@@ -1,3 +1,9 @@
+/**
+ * Modulo de validacion de variables de entorno
+ * @module env.ts
+ * @author Mario Andres Ordoñez Serrano 
+ */
+
 import { z } from 'zod';
 import 'dotenv/config';
 

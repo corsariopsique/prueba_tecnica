@@ -1,3 +1,10 @@
+/**
+ * Modulo de definicion de rutas para la gestion de tareas (CRUD) y
+ * implementa el middleware para la gestion de autorizacion de rutas.
+ * @module tarea.routes.ts
+ * @author Mario Andres Ordoñez Serrano
+ */
+
 import { Router, Request, Response, NextFunction } from 'express';
 import { Types } from "mongoose";
 import { validateToken } from '../middlewares/auth.middleware';
@@ -136,6 +143,14 @@ router.delete('/:id', validateToken, async(req:RequestExtendida, res, next) => {
         throw new NotFoundError(`La tarea con el id ${req.params.id.toString()} no fue encontrada.`);        
     }
 });
+
+/**
+ * Exporta el enrutador taskRouter
+ * @function default 
+ * @example
+ * @returns
+ * app.use('/tareas',taskRouter);
+ */
 
 export default router;
 

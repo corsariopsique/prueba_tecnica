@@ -1,3 +1,10 @@
+/**
+ * Modulo de definicion de rutas para la gestion de usuarios (CRUD) y
+ * autenticacion de usuarios.
+ * @module auth.routes.ts
+ * @author Mario Andres Ordoñez Serrano
+ */
+
 import { Router, Request, Response, NextFunction } from 'express';
 import { generateToken, validateToken, validateRoles, errorHandler } from '../middlewares/auth.middleware';
 import { Usuario } from '../models/Usuario.model';
@@ -110,5 +117,13 @@ router.post('/login', loginLimiter, async (req, res, next) => {
     next(error);
   }
 });
+
+/**
+ * Exporta el enrutador authRouter
+ * @function default 
+ * @example
+ * @returns
+ * app.use('/auth',authRouter);
+ */
 
 export default router;

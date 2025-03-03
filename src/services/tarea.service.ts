@@ -1,6 +1,19 @@
+/**
+ * Modulo de implementacion de servicios para el modelo Tarea
+ * @module tarea.service.ts
+ * @author Mario Andres Ordoñez Serrano
+ */
+
 import { Tarea } from '../models/Tarea.model'
 import { TareaCrear } from '../interfaces/Tarea.interface'
 import { AppError } from '../errors/http/AppError';
+
+/**
+ * Clase que implementa los metodos de gestion CRUD para el modelo tarea
+ * se gestionan errores que son enviados automaticamente al middleware.
+ * @class TareaServicio
+ * @memberof ITarea 
+ */
 
 export class TareaServicio {
 
