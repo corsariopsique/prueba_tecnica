@@ -166,49 +166,25 @@
         }
       }
     },
-    "/{id}": {
+    "/user/{id}": {
       "delete": {
-        "summary": "Permite al usuario eliminar una tarea (mientras los datos sean validados, autoria de la tarea)",
+        "summary": "Permite eliminar el usuario identificado con el id siempre y cuando disponga de autorizacion [admin].",
         "tags": [
-          "Tareas"
+          "Usuarios"
         ],
         "responses": {
           "200": {
-            "description": "La tarea con el identificador ################## fue eliminada con exito.",
+            "description": "Mensaje: El usuario con el id ############ ha sido eliminado.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Tarea"
+                  "$ref": "#/components/schemas/Usuario"
                 }
               }
             }
           },
           "404": {
             "description": "Usuario no encontrado"
-          },
-          "500": {
-            "description": "Error: Mensaje del sistema de validacion de entredas o del servicio."
-          }
-        }
-      },
-      "put": {
-        "summary": "Permite al usuario editar una tarea (mientras los datos sean validados solo requiere los campos que se vayan a modificar)",
-        "tags": [
-          "Tareas"
-        ],
-        "responses": {
-          "202": {
-            "description": "[JSON] Datos de la tarea editada.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Tarea"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error: Mensaje del sistema de validacion de entredas o del servicio."
           }
         }
       }
@@ -274,6 +250,50 @@
         "responses": {
           "201": {
             "description": "[JSON] Datos de la tarea registrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tarea"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error: Mensaje del sistema de validacion de entredas o del servicio."
+          }
+        }
+      }
+    },
+    "/{id}": {
+      "put": {
+        "summary": "Permite al usuario editar una tarea (mientras los datos sean validados solo requiere los campos que se vayan a modificar)",
+        "tags": [
+          "Tareas"
+        ],
+        "responses": {
+          "202": {
+            "description": "[JSON] Datos de la tarea editada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tarea"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error: Mensaje del sistema de validacion de entredas o del servicio."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Permite al usuario eliminar una tarea (mientras los datos sean validados, autoria de la tarea)",
+        "tags": [
+          "Tareas"
+        ],
+        "responses": {
+          "200": {
+            "description": "La tarea con el identificador ################## fue eliminada con exito.",
             "content": {
               "application/json": {
                 "schema": {

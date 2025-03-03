@@ -7,7 +7,7 @@
     "dev": "nodemon --exec ts-node src/index.ts",
     "start": "node build/index.js",
     "build": "tsc",
-    "generate:swagger": "ts-node swagger-generator.ts"
+    "generate:swagger": "ts-node src/swagger-generator.ts"
   },
   "keywords": [],
   "author": "",

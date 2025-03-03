@@ -1,6 +1,6 @@
 import swaggerJSDoc from "swagger-jsdoc";
 import { writeFileSync } from "fs";
-import { options } from "./src/swagger"; // Ajusta la ruta según tu proyecto
+import { options } from "./swagger"; // Ajusta la ruta según tu proyecto
 
 const swaggerSpec = swaggerJSDoc(options);
 writeFileSync("swagger.json", JSON.stringify(swaggerSpec, null, 2));
