@@ -14,7 +14,6 @@ Este es un proyecto de prueba técnica desarrollado con **TypeScript** y **Node.
 - [Scripts Disponibles](#scripts-disponibles)
 
 
-
 ## Características
 
 - **TypeScript:** Aprovecha el tipado estático para mejorar la calidad y mantenibilidad del código.
@@ -63,6 +62,11 @@ O, si utilizas Yarn:
 ```bash
 yarn dev
 ```
+
+## Despligue y Documentación
+
+- **Enlace del servicio** (https://prueba-tecnica-fos4.onrender.com)
+- **Documentacion APIs** (https://prueba-tecnica-fos4.onrender.com/api-docs/)
 
 ## Estructura del Proyecto
 
