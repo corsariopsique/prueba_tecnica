@@ -83,7 +83,7 @@ export const validateRoles = (requiredRoles: string[]) => {
  * @returns {String}
  */
 
-export const generateToken = (usuarioId: string, roles: string[]): string => {
+export const generateToken = (usuarioId: string, roles: string[], username: string): string => {
   if (!SECRET_KEY) {
     throw new AppError(500, "La variable JWT_SECRET no está configurada");
   }
@@ -94,7 +94,7 @@ export const generateToken = (usuarioId: string, roles: string[]): string => {
   };
 
   return jwt.sign(
-    { usuarioId, roles, iat: Math.floor(Date.now() / 1000) },
+    { usuarioId, roles, username, iat: Math.floor(Date.now() / 1000) },
     SECRET_KEY,
     options
   );

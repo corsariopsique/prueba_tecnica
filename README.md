@@ -113,3 +113,4 @@ En el archivo `package.json` se incluyen algunos scripts útiles:
 - `npm run start` : Inicia la aplicación en modo producción (asegúrate de haber compilado previamente).
 - `npm run test` : Ejecuta los esquemas de pruebas 
 - `npm run generate:swagger` : Genera el archivo swagger.json para el esquema de documentacion de APIs
+- `npm run doc` : Genera la documentacion JSDoc.

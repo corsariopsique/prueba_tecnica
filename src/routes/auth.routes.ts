@@ -214,7 +214,7 @@ router.post("/login", loginLimiter, async (req, res, next) => {
       throw new UnauthorizedError("Datos de usuario invalidos");
     }
 
-    const token = generateToken(usuario.id, usuario.roles);
+    const token = generateToken(usuario.id, usuario.roles, usuario.email);
 
     res.json({
       token,
