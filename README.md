@@ -100,6 +100,7 @@ prueba_tecnica/
    JWT_SECRET={llave de encriptación (HS256)} (Gestión tokens JWT)
    JWT_EXPIRES_IN=(Tiempo de expiracion del token) 
    NODE_ENV=(Entorno de ejecucion{"development","production"})
+   NPM_CONFIG_PRODUCTION=false (Para que al compilar no se eliminen los comentarios y trabaje bien la documentacion.)
    ```   
 
 
