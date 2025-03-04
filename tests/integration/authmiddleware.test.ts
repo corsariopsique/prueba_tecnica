@@ -54,7 +54,7 @@ describe("Endpoints de usuario y control autenticaciones", () => {
   });
 
   it("debe negar el acceso a la lista de usuarios", async () => {
-    const token = generateToken(storedUser!?._id, storedUser!?.roles);
+    const token = generateToken(storedUser!?._id, storedUser!?.roles, storedUser!?.email);
 
     const res = await request(app)
       .get("/auth/users")
@@ -64,7 +64,7 @@ describe("Endpoints de usuario y control autenticaciones", () => {
   });
 
   it("debe eliminar el usuario registrado", async () => {
-    const token = generateToken(storedUser!?._id, ["admin"]);
+    const token = generateToken(storedUser!?._id, ["admin"], storedUser!?.email);
     const id = String(storedUser?._id);
     const res = await request(app)
       .delete(`/auth/user/${id}`)

@@ -61,7 +61,7 @@ describe("Pruebas Endpoints del modulo Tareas", () => {
       descripcion: "La Tarea debe quedar registrada",
       fecha_vencimiento: "2025-10-05",
     };
-    const token = generateToken(storedUser!?._id, storedUser!?.roles);
+    const token = generateToken(storedUser!?._id, storedUser!?.roles, storedUser!?.email);
 
     const res = await request(app)
       .post("/tareas/addTarea")
@@ -79,7 +79,7 @@ describe("Pruebas Endpoints del modulo Tareas", () => {
       descripcion: "La Tarea debe quedar registrada",
       fecha_vencimiento: "2025-10-05",
     };
-    const token = generateToken(storedUser!?._id, storedUser!?.roles);
+    const token = generateToken(storedUser!?._id, storedUser!?.roles, storedUser!?.email);
 
     const res = await request(app)
       .post("/tareas/addTarea")
@@ -96,7 +96,7 @@ describe("Pruebas Endpoints del modulo Tareas", () => {
       descricion: "Depende de la prueba la tarea puede o no ser editada",
       estado: "mal ediatada",
     };
-    const token = generateToken(storedUser!?._id, storedUser!?.roles);
+    const token = generateToken(storedUser!?._id, storedUser!?.roles, storedUser!?.email);
 
     const res = await request(app)
       .put(`/tareas/${storesTask?._id}`)
@@ -111,7 +111,7 @@ describe("Pruebas Endpoints del modulo Tareas", () => {
       descricion: "Depende de la prueba la tarea puede o no ser editada",
       estado: "Completada",
     };
-    const token = generateToken(storedUser!?._id, storedUser!?.roles);
+    const token = generateToken(storedUser!?._id, storedUser!?.roles, storedUser!?.email);
 
     const res = await request(app)
       .put(`/tareas/${storesTask?._id}`)
@@ -123,7 +123,7 @@ describe("Pruebas Endpoints del modulo Tareas", () => {
   });
 
   it("el usuario va a eliminar la tarea ya completada", async () => {
-    const token = generateToken(storedUser!?._id, storedUser!?.roles);
+    const token = generateToken(storedUser!?._id, storedUser!?.roles, storedUser!?.email);
 
     const res = await request(app)
       .delete(`/tareas/${storesTask?._id}`)
@@ -132,7 +132,7 @@ describe("Pruebas Endpoints del modulo Tareas", () => {
   });
 
   it("el usuario va a listar las tarea existentes en el sistema a nombre suyo", async () => {
-    const token = generateToken(storedUser!?._id, storedUser!?.roles);
+    const token = generateToken(storedUser!?._id, storedUser!?.roles, storedUser!?.email);
 
     const res = await request(app)
       .get(`/tareas/tareas`)
@@ -142,7 +142,7 @@ describe("Pruebas Endpoints del modulo Tareas", () => {
   });
 
   it("debe eliminar el usuario registrado", async () => {
-    const token = generateToken(storedUser!?._id, ["admin"]);
+    const token = generateToken(storedUser!?._id, ["admin"], storedUser!?.email);
     const id = String(storedUser?._id);
     const res = await request(app)
       .delete(`/auth/user/${id}`)
